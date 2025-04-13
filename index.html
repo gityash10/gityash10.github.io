@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>तर्क युद्ध '25 - विभाग वाद-विवाद चयनकर्ता</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --primary-color: #b30000;
+            --secondary-color: #800000;
+            --accent-color: #ffffff;
+            --bg-color: #f5f5f5;
+            --text-color: #333333;
+            --highlight-color: #ffcc00;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            background-image: radial-gradient(circle, rgba(179,0,0,0.1) 0%, rgba(179,0,0,0.05) 50%, rgba(179,0,0,0) 100%);
+        }
+        
+        .page-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: var(--primary-color);
+            border-radius: 10px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(179,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/></svg>');
+            background-size: 100px 100px;
+            opacity: 0.3;
+            z-index: 0;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 1;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: center;
+            color: var(--primary-color);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            border: 2px solid rgba(255,255,255,0.8);
+        }
+        
+        .title-container {
+            text-align: center;
+            flex-grow: 1;
+            z-index: 1;
+            position: relative;
+        }
+        
+        .title-container::after {
+            content: "";
+            position: absolute;
+            width: 200px;
+            height: 2px;
+            background-color: var(--highlight-color);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            font-size: 2.2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 8px;
+        }
+        
+        .event-title {
+            color: white;
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .event-title::before, .event-title::after {
+            content: "";
+            position: absolute;
+            height: 2px;
+            background-color: var(--highlight-color);
+            top: 50%;
+            width: 40px;
+        }
+        
+        .event-title::before {
+            left: -60px;
+        }
+        
+        .event-title::after {
+            right: -60px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(179,0,0,0.1);
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+        
+        .branches-list {
+            background-color: #f9f9f9;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 1px solid #e9e9e9;
+            position: relative;
+        }
+        
+        .branches-list h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            border-bottom: 2px solid var(--highlight-color);
+            padding-bottom: 8px;
+            display: inline-block;
+        }
+        
+        .branch-item {
+            display: inline-block;
+            margin: 8px;
+            padding: 10px 18px;
+            background-color: white;
+            border-radius: 30px;
+            border: 1px solid #e0e0e0;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .branch-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-color: var(--primary-color);
+        }
+        
+        .branch-used {
+            background-color: #ffeeee;
+            text-decoration: line-through;
+            opacity: 0.7;
+            border: 1px solid #ffdddd;
+        }
+        
+        button {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: block;
+            margin: 30px auto;
+            width: auto;
+            min-width: 280px;
+            box-shadow: 0 4px 15px rgba(179,0,0,0.3);
+            transition: all 0.3s ease;
+            font-family: 'Poppins', Arial, sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                rgba(255,255,255,0) 0%,
+                rgba(255,255,255,0.3) 50%,
+                rgba(255,255,255,0) 100%
+            );
+            transform: rotate(30deg);
+            transition: all 0.5s;
+            opacity: 0;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(179,0,0,0.4);
+        }
+        
+        button:hover::after {
+            animation: shine 1.5s ease-in-out;
+        }
+        
+        @keyframes shine {
+            0% {
+                left: -50%;
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                left: 150%;
+                opacity: 0;
+            }
+        }
+        
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        .results {
+            margin-top: 30px;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            background-color: white;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            position: relative;
+            border: 1px solid rgba(0,0,0,0.05);
+            background-image: radial-gradient(circle at top right, rgba(179,0,0,0.05) 0%, rgba(255,255,255,1) 70%);
+        }
+        
+        .results h2 {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .results h2::after {
+            content: "";
+            position: absolute;
+            width: 50%;
+            height: 3px;
+            background-color: var(--highlight-color);
+            bottom: -10px;
+            left: 25%;
+        }
+        
+        .debate-result {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 30px 0;
+            padding: 20px;
+            border-radius: 50px;
+            background-color: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .for-branch {
+            color: white;
+            padding: 12px 20px;
+            background-color: var(--secondary-color);
+            border-radius: 30px;
+            margin-right: 15px;
+            box-shadow: 0 3px 10px rgba(179,0,0,0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .against-branch {
+            color: white;
+            padding: 12px 20px;
+            background-color: var(--primary-color);
+            border-radius: 30px;
+            margin-left: 15px;
+            box-shadow: 0 3px 10px rgba(179,0,0,0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .versus {
+            font-size: 1.8rem;
+            margin: 0 15px;
+            position: relative;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .versus::before, .versus::after {
+            content: "";
+            height: 2px;
+            width: 20px;
+            background-color: var(--highlight-color);
+            position: absolute;
+        }
+        
+        .versus::before {
+            left: -25px;
+        }
+        
+        .versus::after {
+            right: -25px;
+        }
+        
+        .history {
+            margin-top: 40px;
+            padding: 25px;
+            background-color: #f9f9f9;
+            border-radius: 12px;
+            border: 1px solid #e9e9e9;
+        }
+        
+        .history h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            border-bottom: 2px solid var(--highlight-color);
+            padding-bottom: 8px;
+            display: inline-block;
+        }
+        
+        .history-item {
+            background-color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--highlight-color);
+            transition: all 0.3s ease;
+        }
+        
+        .history-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .reset-button {
+            background: linear-gradient(135deg, #FF4B4B, #FF7676);
+            color: white;
+            padding: 12px 25px;
+            border: none; 
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(255, 75, 75, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .reset-button:hover {
+            background: linear-gradient(135deg, #FF6060, #FF4B4B);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 75, 75, 0.4);
+        }
+        
+        #noMoreBranches {
+            text-align: center;
+            margin-top: 25px;
+            color: #FF4B4B;
+            font-weight: bold;
+            padding: 15px 20px;
+            background-color: #FFEEEE;
+            border-radius: 8px;
+            border: 1px solid #FFDDDD;
+            box-shadow: 0 3px 10px rgba(255,75,75,0.1);
+        }
+        
+        .decorative-element {
+            position: absolute;
+            z-index: -1;
+        }
+        
+        .arrow-left {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            width: 60px;
+            height: 2px;
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        .arrow-left::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: -4px;
+            border-style: solid;
+            border-width: 5px 0 5px 8px;
+            border-color: transparent transparent transparent rgba(255,255,255,0.2);
+        }
+        
+        .arrow-right {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            width: 60px;
+            height: 2px;
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        .arrow-right::before {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: -4px;
+            border-style: solid;
+            border-width: 5px 8px 5px 0;
+            border-color: transparent rgba(255,255,255,0.2) transparent transparent;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            color: #777;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="header">
+            <div class="arrow-left"></div>
+            <div class="arrow-right"></div>
+            
+            <div class="logo-container">
+                <img src="logoHS.png" alt="Hindi Samiti Logo" class="logo" style="width: 80px; height: 80px; object-fit: contain;">
+            </div>
+            
+            <div class="title-container">
+                <div class="event-title">तर्क युद्ध</div>
+                <h1>अंतर-विभागीय वाद-विवाद प्रतियोगिता</h1>
+            </div>
+
+            
+            <div class="logo-container">
+                <img src="logoTY.png" alt="Tark Yudh Logo" class="logo" style="width: 80px; height: 80px; object-fit: contain;">
+            </div>
+        </div>
+        
+        <div class="container">
+            <div class="branches-list">
+                <h3>उपलब्ध विभाग</h3>
+                <div id="branchesDisplay"></div>
+            </div>
+            
+            <button id="selectButton" onclick="assignBranches()">यादृच्छिक विभाग चुनें</button>
+            
+            <div id="results" class="results" style="display: none;">
+                <h2>वाद-विवाद नियुक्ति</h2>
+                <div class="debate-result">
+                    <span id="forBranch" class="for-branch"></span> 
+                    <span class="versus">बनाम</span> 
+                    <span id="againstBranch" class="against-branch"></span>
+                </div>
+                <div>
+                    <p><strong><span id="forBranchName"></span></strong> प्रस्ताव के <strong>पक्ष</strong> में तर्क देगा</p>
+                    <p><strong><span id="againstBranchName"></span></strong> प्रस्ताव के <strong>विपक्ष</strong> में तर्क देगा</p>
+                </div>
+            </div>
+            
+            <div id="history" class="history" style="display: none;">
+                <h3>पिछली नियुक्तियाँ</h3>
+                <div id="historyList"></div>
+                <button class="reset-button" onclick="resetCompetition()">प्रतियोगिता रीसेट करें</button>
+            </div>
+            
+            <div id="noMoreBranches" style="display: none;">
+                वाद-विवाद के लिए पर्याप्त विभाग नहीं बचे हैं। कृपया प्रतियोगिता रीसेट करें।
+            </div>
+        </div>
+        
+        <div class="footer">
+            हिंदी समिति द्वारा आयोजित तर्क युद्ध '25 | सर्वाधिकार सुरक्षित © 2025
+        </div>
+    </div>
+    
+    <script>
+        // Pre-loaded list of departments (branches)
+        const allBranches = [
+            "कंप्यूटर विज्ञान और इंजीनियरिंग",
+            "कंप्यूटर विज्ञान और व्यापार प्रणाली",
+            "कंप्यूटर विज्ञान और डिजाइन",
+            "इनफार्मेशन टेक्नोलॉजी",
+            "सिविल इंजीनियरिंग",
+            "मैकेनिकल इंजीनियरिंग",
+            "इलेक्ट्रिकल इंजीनियरिंग",
+            "इलेक्ट्रॉनिक्स इंजीनियरिंग",
+            "इलेक्ट्रॉनिक्स & टेलीकम्यूनिकेशन इंजीनियरिंग",
+            "इंटरनेट ऑफ़ थिंग्स",
+            "इ इ- इंटरनेट ऑफ़ थिंग्स",
+            "आर्टिफीसियल इंटेलिजेंस",
+            "आर्टिफीसियल इंटेलिजेंस & डाटा साइंस",
+            "आर्टिफीसियल इंटेलिजेंस & मशीन लर्निंग",
+            "आर्टिफीसियल इंटेलिजेंस & रोबोटिक्स",
+            "केमिकल इंजीनियरिंग",
+            "मैथमेटिक्स & कंप्यूटिंग",
+            "बी. आर्किटेक्चर"
+        ];
+        
+        // Available branches for selection
+        let availableBranches = [...allBranches];
+        
+        // Used branches that won't be available in next rounds
+        let usedBranches = [];
+        
+        // Store assignment history
+        let assignmentHistory = [];
+        
+        // Display the branches when the page loads
+        window.onload = function() {
+            displayBranches();
+        };
+        
+        function displayBranches() {
+            const branchesDisplay = document.getElementById('branchesDisplay');
+            branchesDisplay.innerHTML = '';
+            
+            allBranches.forEach(branch => {
+                const branchElement = document.createElement('div');
+                branchElement.className = 'branch-item';
+                if (usedBranches.includes(branch)) {
+                    branchElement.classList.add('branch-used');
+                }
+                branchElement.textContent = branch;
+                branchesDisplay.appendChild(branchElement);
+            });
+            
+            // Update select button state
+            document.getElementById('selectButton').disabled = availableBranches.length < 2;
+            
+            // Show warning if not enough branches
+            document.getElementById('noMoreBranches').style.display = 
+                availableBranches.length < 2 ? 'block' : 'none';
+        }
+        
+        function assignBranches() {
+            // Need at least 2 branches
+            if (availableBranches.length < 2) {
+                alert("वाद-विवाद के लिए पर्याप्त विभाग नहीं बचे हैं!");
+                return;
+            }
+            
+            // Randomly shuffle the available branches
+            const shuffledBranches = [...availableBranches].sort(() => Math.random() - 0.5);
+            
+            // Take the first two for this debate
+            const forBranch = shuffledBranches[0];
+            const againstBranch = shuffledBranches[1];
+            
+            // Remove these branches from available branches
+            availableBranches = availableBranches.filter(branch => 
+                branch !== forBranch && branch !== againstBranch);
+            
+            // Add to used branches
+            usedBranches.push(forBranch, againstBranch);
+            
+            // Display results
+            document.getElementById('forBranch').textContent = forBranch;
+            document.getElementById('againstBranch').textContent = againstBranch;
+            document.getElementById('forBranchName').textContent = forBranch;
+            document.getElementById('againstBranchName').textContent = againstBranch;
+            document.getElementById('results').style.display = 'block';
+            
+            // Add to history
+            const timestamp = new Date().toLocaleString('hi-IN');
+            assignmentHistory.unshift({
+                forBranch,
+                againstBranch,
+                timestamp
+            });
+            
+            // Update display
+            displayBranches();
+            updateHistoryDisplay();
+        }
+        
+        function updateHistoryDisplay() {
+            const historyContainer = document.getElementById('history');
+            const historyList = document.getElementById('historyList');
+            
+            if (assignmentHistory.length > 0) {
+                historyContainer.style.display = 'block';
+                
+                // Clear previous history
+                historyList.innerHTML = '';
+                
+                // Add each history item
+                assignmentHistory.forEach((item, index) => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item';
+                    historyItem.innerHTML = `
+                        <strong>${item.timestamp}</strong><br>
+                        ${item.forBranch} (पक्ष) बनाम ${item.againstBranch} (विपक्ष)
+                    `;
+                    historyList.appendChild(historyItem);
+                });
+            }
+        }
+        
+        function resetCompetition() {
+            // Reset available branches
+            availableBranches = [...allBranches];
+            usedBranches = [];
+            
+            // Hide results
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('noMoreBranches').style.display = 'none';
+            
+            // Clear history
+            assignmentHistory = [];
+            document.getElementById('history').style.display = 'none';
+            
+            // Update display
+            displayBranches();
+            
+            // Confirmation message
+            alert("प्रतियोगिता सफलतापूर्वक रीसेट कर दी गई है। सभी विभाग अब उपलब्ध हैं।");
+        }
+    </script>
+</body>
+</html>
