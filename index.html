@@ -380,8 +380,8 @@
             font-size: 1.8rem;
             margin: 0 15px;
             position: relative;
-             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); 
-             -webkit-background-clip: text; 
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); 
+            -webkit-background-clip: text; 
             -webkit-text-fill-color: transparent;
             font-weight: 800;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
@@ -455,6 +455,18 @@
             background: linear-gradient(135deg, #FF6060, #FF4B4B);
             transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(255, 75, 75, 0.4);
+        }
+        
+        #completionMessage {
+            text-align: center;
+            margin-top: 25px;
+            color: #28a745;
+            font-weight: bold;
+            padding: 15px 20px;
+            background-color: #e8f5e9;
+            border-radius: 8px;
+            border: 1px solid #c8e6c9;
+            box-shadow: 0 3px 10px rgba(40,167,69,0.1);
         }
         
         #noMoreDepartments {
@@ -556,6 +568,33 @@
         .both-marker {
             background-color: #f0f0f0;
         }
+        
+        .progress-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 10px;
+            transition: width 0.5s ease-in-out;
+        }
+        
+        .progress-text {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -563,7 +602,6 @@
         <div class="header">
             <div class="arrow-left"></div>
             <div class="arrow-right"></div>
-            
             <div class="logo-container">
                 <img src="LOGO MITS.png" alt="Hindi Samiti Logo" class="logo" style="width: 80px; height: 80px; object-fit: contain;">
             </div>
@@ -598,9 +636,21 @@
                 </div>
                 
                 <div id="departmentsDisplay"></div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div id="progressText" class="progress-text">प्रगति: 0%</div>
+                </div>
             </div>
             
             <button id="selectButton" onclick="assignDepartments()">यादृच्छिक विभाग चुनें</button>
+            <button id="completeAllButton" onclick="completeAllAssignments()" style="display: none;">सभी विभागों को नियुक्त करें</button>
+            
+            <div id="completionMessage" style="display: none;">
+                सभी विभाग सफलतापूर्वक नियुक्त किए गए हैं! प्रत्येक विभाग को पक्ष और विपक्ष दोनों भूमिकाओं में प्रयोग किया गया है।
+            </div>
             
             <div id="results" class="results" style="display: none;">
                 <h2>वाद-विवाद नियुक्ति</h2>
@@ -632,7 +682,7 @@
     </div>
     
     <script>
-        // New simplified list of departments
+        // List of departments
         const allDepartments = [
             "CS",
             "IT", 
@@ -650,22 +700,27 @@
         // Track which departments have been used and in which role
         let departmentStatus = {};
         
-        // Initialize department status
-        allDepartments.forEach(dept => {
-            departmentStatus[dept] = {
-                forUsed: false,
-                againstUsed: false
-            };
-        });
-        
         // Store assignment history
         let assignmentHistory = [];
         
-        // Display the departments when the page loads
-        window.onload = function() {
-            displayDepartments();
-        };
+        // Initialize department status
+        function initializeDepartmentStatus() {
+            allDepartments.forEach(dept => {
+                departmentStatus[dept] = {
+                    forUsed: false,
+                    againstUsed: false
+                };
+            });
+        }
         
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDepartmentStatus();
+            displayDepartments();
+            updateProgressBar();
+        });
+        
+        // Display departments with their current status
         function displayDepartments() {
             const departmentsDisplay = document.getElementById('departmentsDisplay');
             departmentsDisplay.innerHTML = '';
@@ -689,68 +744,81 @@
                 departmentsDisplay.appendChild(departmentElement);
             });
             
-            // Check if there are enough departments for another round
-            const availableForSelection = checkAvailableDepartments();
-            
-            // Update select button state
-            document.getElementById('selectButton').disabled = availableForSelection.length < 2;
-            
-            // Show warning if not enough departments
-            document.getElementById('noMoreDepartments').style.display = 
-                availableForSelection.length < 2 ? 'block' : 'none';
+            // Update button states based on available departments
+            updateButtonStates();
         }
         
-        function checkAvailableDepartments() {
-            // We need at least one department that hasn't been used for "for" position
-            // and at least one different department that hasn't been used for "against" position
-            const forAvailable = allDepartments.filter(dept => !departmentStatus[dept].forUsed);
-            const againstAvailable = allDepartments.filter(dept => !departmentStatus[dept].againstUsed);
+        // Update the progress bar
+        function updateProgressBar() {
+            const totalPossibleAssignments = allDepartments.length * 2; // Each department in both roles
+            let completedAssignments = 0;
             
-            // If we have enough departments of each type and they can be different
-            const canSelect = (forAvailable.length > 0 && againstAvailable.length > 0 && 
-                             (forAvailable.length > 1 || againstAvailable.length > 1 || 
-                              forAvailable[0] !== againstAvailable[0]));
+            // Count completed assignments
+            Object.values(departmentStatus).forEach(status => {
+                if (status.forUsed) completedAssignments++;
+                if (status.againstUsed) completedAssignments++;
+            });
             
-            // Return an array of departments that are available for selection
-            return canSelect ? 
-                forAvailable.filter(dept => againstAvailable.some(d => d !== dept)) : [];
-        }
-        
-        function assignDepartments() {
-            // Check if there are enough available departments
-            const availableForSelection = checkAvailableDepartments();
+            // Calculate percentage
+            const percentage = Math.round((completedAssignments / totalPossibleAssignments) * 100);
             
-            if (availableForSelection.length < 2) {
-                alert("वाद-विवाद के लिए पर्याप्त विभागों के उम्मीदवार नहीं बचे हैं!");
-                return;
+            // Update progress bar
+            document.getElementById('progressFill').style.width = `${percentage}%`;
+            document.getElementById('progressText').textContent = `प्रगति: ${percentage}%`;
+            
+            // Show completion message if all departments have been used in both roles
+            if (percentage === 100) {
+                document.getElementById('completionMessage').style.display = 'block';
+                document.getElementById('selectButton').style.display = 'none';
+                document.getElementById('completeAllButton').style.display = 'none';
             }
-            
+        }
+        
+        // Check which departments are available for selection
+        function getAvailableDepartments() {
             // Get departments available for "for" and "against" roles
             const forAvailable = allDepartments.filter(dept => !departmentStatus[dept].forUsed);
             const againstAvailable = allDepartments.filter(dept => !departmentStatus[dept].againstUsed);
             
-            // Randomly select a department for "for" position
-            let forDept;
-            let againstDept;
+            return {
+                forAvailable,
+                againstAvailable,
+                canSelectMore: forAvailable.length > 0 && againstAvailable.length > 0
+            };
+        }
+        
+        // Update button states based on available departments
+        function updateButtonStates() {
+            const { forAvailable, againstAvailable, canSelectMore } = getAvailableDepartments();
             
-            // Try to find a valid pair
-            do {
-                forDept = forAvailable[Math.floor(Math.random() * forAvailable.length)];
-                
-                // Filter out the forDept from against candidates to avoid same department match
-                const validAgainstCandidates = againstAvailable.filter(dept => dept !== forDept);
-                
-                // If no valid against candidates, we need to try a different for department
-                if (validAgainstCandidates.length === 0) {
-                    continue;
-                }
-                
-                againstDept = validAgainstCandidates[Math.floor(Math.random() * validAgainstCandidates.length)];
-                
-                // If we found both departments, break the loop
-                break;
-                
-            } while (true);
+            // Update select button state
+            document.getElementById('selectButton').disabled = !canSelectMore;
+            
+            // Show complete all button if there are multiple departments left to assign
+            document.getElementById('completeAllButton').style.display = 
+                (forAvailable.length > 1 || againstAvailable.length > 1) ? 'block' : 'none';
+            
+            // Show warning if not enough departments
+            document.getElementById('noMoreDepartments').style.display = 
+                !canSelectMore && (forAvailable.length > 0 || againstAvailable.length > 0) ? 'block' : 'none';
+        }
+        
+        // Assign departments for debate
+        function assignDepartments() {
+            const { forAvailable, againstAvailable, canSelectMore } = getAvailableDepartments();
+            
+            if (!canSelectMore) {
+                alert("वाद-विवाद के लिए पर्याप्त विभागों के उम्मीदवार नहीं बचे हैं!");
+                return;
+            }
+            
+            // Find the best pair to assign
+            const { forDept, againstDept } = findBestPair(forAvailable, againstAvailable);
+            
+            if (!forDept || !againstDept) {
+                alert("उपयुक्त विभाग जोड़ी नहीं मिली!");
+                return;
+            }
             
             // Update department status
             departmentStatus[forDept].forUsed = true;
@@ -774,8 +842,64 @@
             // Update display
             displayDepartments();
             updateHistoryDisplay();
+            updateProgressBar();
         }
         
+        // Find the best pair of departments to assign
+        function findBestPair(forAvailable, againstAvailable) {
+            // Strategy: Prioritize departments that haven't been used in either role
+            
+            // First, try to find departments that haven't been used at all
+            const unusedDepts = allDepartments.filter(dept => 
+                !departmentStatus[dept].forUsed && !departmentStatus[dept].againstUsed);
+            
+            if (unusedDepts.length >= 2) {
+                // Randomly select two unused departments
+                const shuffled = [...unusedDepts].sort(() => 0.5 - Math.random());
+                return {
+                    forDept: shuffled[0],
+                    againstDept: shuffled[1]
+                };
+            }
+            
+            // If we can't find two completely unused departments, prioritize balance
+            // Try to find a valid pair where both departments need the respective roles
+            for (const forDept of forAvailable) {
+                // Filter against candidates to avoid same department match
+                const validAgainstCandidates = againstAvailable.filter(dept => dept !== forDept);
+                
+                if (validAgainstCandidates.length > 0) {
+                    // Prioritize departments that haven't been used in against role
+                    const bestAgainstCandidates = validAgainstCandidates.filter(dept => 
+                        !departmentStatus[dept].forUsed || !departmentStatus[dept].againstUsed);
+                    
+                    const againstDept = bestAgainstCandidates.length > 0 
+                        ? bestAgainstCandidates[Math.floor(Math.random() * bestAgainstCandidates.length)]
+                        : validAgainstCandidates[Math.floor(Math.random() * validAgainstCandidates.length)];
+                    
+                    return { forDept, againstDept };
+                }
+            }
+            
+            // If we still can't find a valid pair, return null
+            return { forDept: null, againstDept: null };
+        }
+        
+        // Complete all remaining assignments automatically
+        function completeAllAssignments() {
+            let { canSelectMore } = getAvailableDepartments();
+            
+            // Keep assigning departments until no more can be assigned
+            while (canSelectMore) {
+                assignDepartments();
+                ({ canSelectMore } = getAvailableDepartments());
+            }
+            
+            // Show completion message
+            updateProgressBar();
+        }
+        
+        // Update history display
         function updateHistoryDisplay() {
             const historyContainer = document.getElementById('history');
             const historyList = document.getElementById('historyList');
@@ -799,18 +923,16 @@
             }
         }
         
+        // Reset the competition
         function resetCompetition() {
             // Reset department status
-            allDepartments.forEach(dept => {
-                departmentStatus[dept] = {
-                    forUsed: false,
-                    againstUsed: false
-                };
-            });
+            initializeDepartmentStatus();
             
-            // Hide results
+            // Hide results and messages
             document.getElementById('results').style.display = 'none';
             document.getElementById('noMoreDepartments').style.display = 'none';
+            document.getElementById('completionMessage').style.display = 'none';
+            document.getElementById('selectButton').style.display = 'block';
             
             // Clear history
             assignmentHistory = [];
@@ -818,6 +940,7 @@
             
             // Update display
             displayDepartments();
+            updateProgressBar();
             
             // Confirmation message
             alert("प्रतियोगिता सफलतापूर्वक रीसेट कर दी गई है। सभी विभाग अब उपलब्ध हैं।");
