@@ -161,7 +161,7 @@
             background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
         }
         
-        .branches-list {
+        .departments-list {
             background-color: #f9f9f9;
             padding: 25px;
             border-radius: 10px;
@@ -170,7 +170,7 @@
             position: relative;
         }
         
-        .branches-list h3 {
+        .departments-list h3 {
             color: var(--primary-color);
             margin-bottom: 20px;
             font-size: 1.4rem;
@@ -179,7 +179,17 @@
             display: inline-block;
         }
         
-        .branch-item {
+        .department-status {
+            margin-bottom: 15px;
+        }
+        
+        .department-status-heading {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        .department-item {
             display: inline-block;
             margin: 8px;
             padding: 10px 18px;
@@ -189,19 +199,49 @@
             font-size: 0.95rem;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             transition: all 0.3s ease;
+            position: relative;
         }
         
-        .branch-item:hover {
+        .department-item:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             border-color: var(--primary-color);
         }
         
-        .branch-used {
-            background-color: #ffeeee;
-            text-decoration: line-through;
+        .for-used {
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .against-used {
+            border-right: 4px solid var(--secondary-color);
+        }
+        
+        .both-used {
+            background-color: #f0f0f0;
             opacity: 0.7;
-            border: 1px solid #ffdddd;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            margin-top: 5px;
+            font-size: 0.8rem;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .for-dot {
+            background-color: var(--primary-color);
+        }
+        
+        .against-dot {
+            background-color: var(--secondary-color);
         }
         
         button {
@@ -314,7 +354,7 @@
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
         }
         
-        .for-branch {
+        .for-department {
             color: white;
             padding: 12px 20px;
             background-color: var(--secondary-color);
@@ -325,7 +365,7 @@
             z-index: 1;
         }
         
-        .against-branch {
+        .against-department {
             color: white;
             padding: 12px 20px;
             background-color: var(--primary-color);
@@ -340,8 +380,8 @@
             font-size: 1.8rem;
             margin: 0 15px;
             position: relative;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text; 
+             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); 
+             -webkit-background-clip: text; 
             -webkit-text-fill-color: transparent;
             font-weight: 800;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
@@ -417,7 +457,7 @@
             box-shadow: 0 6px 15px rgba(255, 75, 75, 0.4);
         }
         
-        #noMoreBranches {
+        #noMoreDepartments {
             text-align: center;
             margin-top: 25px;
             color: #FF4B4B;
@@ -480,6 +520,42 @@
             color: #777;
             font-size: 0.9rem;
         }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+        
+        .legend-marker {
+            width: 20px;
+            height: 12px;
+            margin-right: 8px;
+            border-radius: 3px;
+        }
+        
+        .for-marker {
+            border-left: 4px solid var(--primary-color);
+            background-color: white;
+        }
+        
+        .against-marker {
+            border-right: 4px solid var(--secondary-color);
+            background-color: white;
+        }
+        
+        .both-marker {
+            background-color: #f0f0f0;
+        }
     </style>
 </head>
 <body>
@@ -489,38 +565,53 @@
             <div class="arrow-right"></div>
             
             <div class="logo-container">
-                <img src="logoHS.png" alt="Hindi Samiti Logo" class="logo" style="width: 80px; height: 80px; object-fit: contain;">
+                <img src="LOGO MITS.png" alt="Hindi Samiti Logo" class="logo" style="width: 80px; height: 80px; object-fit: contain;">
             </div>
             
             <div class="title-container">
                 <div class="event-title">तर्क युद्ध</div>
                 <h1>अंतर-विभागीय वाद-विवाद प्रतियोगिता</h1>
             </div>
-
             
             <div class="logo-container">
-                <img src="logoTY.png" alt="Tark Yudh Logo" class="logo" style="width: 80px; height: 80px; object-fit: contain;">
+                <img src="logoHS.png" alt="Tark Yudh Logo" class="logo" style="width: 80px; height: 80px; object-fit: contain;">
             </div>
         </div>
         
         <div class="container">
-            <div class="branches-list">
-                <h3>उपलब्ध विभाग</h3>
-                <div id="branchesDisplay"></div>
+            <div class="departments-list">
+                <h3>विभाग स्थिति</h3>
+                
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-marker for-marker"></div>
+                        <span>पक्ष में प्रयुक्त</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-marker against-marker"></div>
+                        <span>विपक्ष में प्रयुक्त</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-marker both-marker"></div>
+                        <span>दोनों तरफ प्रयुक्त</span>
+                    </div>
+                </div>
+                
+                <div id="departmentsDisplay"></div>
             </div>
             
-            <button id="selectButton" onclick="assignBranches()">यादृच्छिक विभाग चुनें</button>
+            <button id="selectButton" onclick="assignDepartments()">यादृच्छिक विभाग चुनें</button>
             
             <div id="results" class="results" style="display: none;">
                 <h2>वाद-विवाद नियुक्ति</h2>
                 <div class="debate-result">
-                    <span id="forBranch" class="for-branch"></span> 
+                    <span id="forDepartment" class="for-department"></span> 
                     <span class="versus">बनाम</span> 
-                    <span id="againstBranch" class="against-branch"></span>
+                    <span id="againstDepartment" class="against-department"></span>
                 </div>
                 <div>
-                    <p><strong><span id="forBranchName"></span></strong> प्रस्ताव के <strong>पक्ष</strong> में तर्क देगा</p>
-                    <p><strong><span id="againstBranchName"></span></strong> प्रस्ताव के <strong>विपक्ष</strong> में तर्क देगा</p>
+                    <p><strong><span id="forDepartmentName"></span></strong> प्रस्ताव के <strong>पक्ष</strong> में तर्क देगा</p>
+                    <p><strong><span id="againstDepartmentName"></span></strong> प्रस्ताव के <strong>विपक्ष</strong> में तर्क देगा</p>
                 </div>
             </div>
             
@@ -530,8 +621,8 @@
                 <button class="reset-button" onclick="resetCompetition()">प्रतियोगिता रीसेट करें</button>
             </div>
             
-            <div id="noMoreBranches" style="display: none;">
-                वाद-विवाद के लिए पर्याप्त विभाग नहीं बचे हैं। कृपया प्रतियोगिता रीसेट करें।
+            <div id="noMoreDepartments" style="display: none;">
+                वाद-विवाद के लिए पर्याप्त विभागों के उम्मीदवार नहीं बचे हैं। कृपया प्रतियोगिता रीसेट करें।
             </div>
         </div>
         
@@ -541,102 +632,147 @@
     </div>
     
     <script>
-        // Pre-loaded list of departments (branches)
-        const allBranches = [
-            "कंप्यूटर विज्ञान और इंजीनियरिंग",
-            "कंप्यूटर विज्ञान और व्यापार प्रणाली",
-            "कंप्यूटर विज्ञान और डिजाइन",
-            "इनफार्मेशन टेक्नोलॉजी",
-            "सिविल इंजीनियरिंग",
-            "मैकेनिकल इंजीनियरिंग",
-            "इलेक्ट्रिकल इंजीनियरिंग",
-            "इलेक्ट्रॉनिक्स इंजीनियरिंग",
-            "इलेक्ट्रॉनिक्स & टेलीकम्यूनिकेशन इंजीनियरिंग",
-            "इंटरनेट ऑफ़ थिंग्स",
-            "इ इ- इंटरनेट ऑफ़ थिंग्स",
-            "आर्टिफीसियल इंटेलिजेंस",
-            "आर्टिफीसियल इंटेलिजेंस & डाटा साइंस",
-            "आर्टिफीसियल इंटेलिजेंस & मशीन लर्निंग",
-            "आर्टिफीसियल इंटेलिजेंस & रोबोटिक्स",
-            "केमिकल इंजीनियरिंग",
-            "मैथमेटिक्स & कंप्यूटिंग",
-            "बी. आर्किटेक्चर"
+        // New simplified list of departments
+        const allDepartments = [
+            "CS",
+            "IT", 
+            "AI",
+            "IOT",
+            "Electrical",
+            "Electronics",
+            "MAC",
+            "CE",
+            "ME",
+            "Chemical",
+            "ARCH"
         ];
         
-        // Available branches for selection
-        let availableBranches = [...allBranches];
+        // Track which departments have been used and in which role
+        let departmentStatus = {};
         
-        // Used branches that won't be available in next rounds
-        let usedBranches = [];
+        // Initialize department status
+        allDepartments.forEach(dept => {
+            departmentStatus[dept] = {
+                forUsed: false,
+                againstUsed: false
+            };
+        });
         
         // Store assignment history
         let assignmentHistory = [];
         
-        // Display the branches when the page loads
+        // Display the departments when the page loads
         window.onload = function() {
-            displayBranches();
+            displayDepartments();
         };
         
-        function displayBranches() {
-            const branchesDisplay = document.getElementById('branchesDisplay');
-            branchesDisplay.innerHTML = '';
+        function displayDepartments() {
+            const departmentsDisplay = document.getElementById('departmentsDisplay');
+            departmentsDisplay.innerHTML = '';
             
-            allBranches.forEach(branch => {
-                const branchElement = document.createElement('div');
-                branchElement.className = 'branch-item';
-                if (usedBranches.includes(branch)) {
-                    branchElement.classList.add('branch-used');
+            allDepartments.forEach(dept => {
+                const departmentElement = document.createElement('div');
+                departmentElement.className = 'department-item';
+                
+                const status = departmentStatus[dept];
+                
+                // Add appropriate classes based on usage
+                if (status.forUsed && status.againstUsed) {
+                    departmentElement.classList.add('both-used');
+                } else if (status.forUsed) {
+                    departmentElement.classList.add('for-used');
+                } else if (status.againstUsed) {
+                    departmentElement.classList.add('against-used');
                 }
-                branchElement.textContent = branch;
-                branchesDisplay.appendChild(branchElement);
+                
+                departmentElement.textContent = dept;
+                departmentsDisplay.appendChild(departmentElement);
             });
             
-            // Update select button state
-            document.getElementById('selectButton').disabled = availableBranches.length < 2;
+            // Check if there are enough departments for another round
+            const availableForSelection = checkAvailableDepartments();
             
-            // Show warning if not enough branches
-            document.getElementById('noMoreBranches').style.display = 
-                availableBranches.length < 2 ? 'block' : 'none';
+            // Update select button state
+            document.getElementById('selectButton').disabled = availableForSelection.length < 2;
+            
+            // Show warning if not enough departments
+            document.getElementById('noMoreDepartments').style.display = 
+                availableForSelection.length < 2 ? 'block' : 'none';
         }
         
-        function assignBranches() {
-            // Need at least 2 branches
-            if (availableBranches.length < 2) {
-                alert("वाद-विवाद के लिए पर्याप्त विभाग नहीं बचे हैं!");
+        function checkAvailableDepartments() {
+            // We need at least one department that hasn't been used for "for" position
+            // and at least one different department that hasn't been used for "against" position
+            const forAvailable = allDepartments.filter(dept => !departmentStatus[dept].forUsed);
+            const againstAvailable = allDepartments.filter(dept => !departmentStatus[dept].againstUsed);
+            
+            // If we have enough departments of each type and they can be different
+            const canSelect = (forAvailable.length > 0 && againstAvailable.length > 0 && 
+                             (forAvailable.length > 1 || againstAvailable.length > 1 || 
+                              forAvailable[0] !== againstAvailable[0]));
+            
+            // Return an array of departments that are available for selection
+            return canSelect ? 
+                forAvailable.filter(dept => againstAvailable.some(d => d !== dept)) : [];
+        }
+        
+        function assignDepartments() {
+            // Check if there are enough available departments
+            const availableForSelection = checkAvailableDepartments();
+            
+            if (availableForSelection.length < 2) {
+                alert("वाद-विवाद के लिए पर्याप्त विभागों के उम्मीदवार नहीं बचे हैं!");
                 return;
             }
             
-            // Randomly shuffle the available branches
-            const shuffledBranches = [...availableBranches].sort(() => Math.random() - 0.5);
+            // Get departments available for "for" and "against" roles
+            const forAvailable = allDepartments.filter(dept => !departmentStatus[dept].forUsed);
+            const againstAvailable = allDepartments.filter(dept => !departmentStatus[dept].againstUsed);
             
-            // Take the first two for this debate
-            const forBranch = shuffledBranches[0];
-            const againstBranch = shuffledBranches[1];
+            // Randomly select a department for "for" position
+            let forDept;
+            let againstDept;
             
-            // Remove these branches from available branches
-            availableBranches = availableBranches.filter(branch => 
-                branch !== forBranch && branch !== againstBranch);
+            // Try to find a valid pair
+            do {
+                forDept = forAvailable[Math.floor(Math.random() * forAvailable.length)];
+                
+                // Filter out the forDept from against candidates to avoid same department match
+                const validAgainstCandidates = againstAvailable.filter(dept => dept !== forDept);
+                
+                // If no valid against candidates, we need to try a different for department
+                if (validAgainstCandidates.length === 0) {
+                    continue;
+                }
+                
+                againstDept = validAgainstCandidates[Math.floor(Math.random() * validAgainstCandidates.length)];
+                
+                // If we found both departments, break the loop
+                break;
+                
+            } while (true);
             
-            // Add to used branches
-            usedBranches.push(forBranch, againstBranch);
+            // Update department status
+            departmentStatus[forDept].forUsed = true;
+            departmentStatus[againstDept].againstUsed = true;
             
             // Display results
-            document.getElementById('forBranch').textContent = forBranch;
-            document.getElementById('againstBranch').textContent = againstBranch;
-            document.getElementById('forBranchName').textContent = forBranch;
-            document.getElementById('againstBranchName').textContent = againstBranch;
+            document.getElementById('forDepartment').textContent = forDept;
+            document.getElementById('againstDepartment').textContent = againstDept;
+            document.getElementById('forDepartmentName').textContent = forDept;
+            document.getElementById('againstDepartmentName').textContent = againstDept;
             document.getElementById('results').style.display = 'block';
             
             // Add to history
             const timestamp = new Date().toLocaleString('hi-IN');
             assignmentHistory.unshift({
-                forBranch,
-                againstBranch,
+                forDepartment: forDept,
+                againstDepartment: againstDept,
                 timestamp
             });
             
             // Update display
-            displayBranches();
+            displayDepartments();
             updateHistoryDisplay();
         }
         
@@ -656,7 +792,7 @@
                     historyItem.className = 'history-item';
                     historyItem.innerHTML = `
                         <strong>${item.timestamp}</strong><br>
-                        ${item.forBranch} (पक्ष) बनाम ${item.againstBranch} (विपक्ष)
+                        ${item.forDepartment} (पक्ष) बनाम ${item.againstDepartment} (विपक्ष)
                     `;
                     historyList.appendChild(historyItem);
                 });
@@ -664,20 +800,24 @@
         }
         
         function resetCompetition() {
-            // Reset available branches
-            availableBranches = [...allBranches];
-            usedBranches = [];
+            // Reset department status
+            allDepartments.forEach(dept => {
+                departmentStatus[dept] = {
+                    forUsed: false,
+                    againstUsed: false
+                };
+            });
             
             // Hide results
             document.getElementById('results').style.display = 'none';
-            document.getElementById('noMoreBranches').style.display = 'none';
+            document.getElementById('noMoreDepartments').style.display = 'none';
             
             // Clear history
             assignmentHistory = [];
             document.getElementById('history').style.display = 'none';
             
             // Update display
-            displayBranches();
+            displayDepartments();
             
             // Confirmation message
             alert("प्रतियोगिता सफलतापूर्वक रीसेट कर दी गई है। सभी विभाग अब उपलब्ध हैं।");
